@@ -64,7 +64,7 @@ var STRING_CAMELIZE_REGEXP_1 = (/(\-|\_|\.|\s)+(.)?/g);
 var STRING_CAMELIZE_REGEXP_2 = (/(^|\/)([A-Z])/g);
 
 function camelize(key) {
-  return key.replace(STRING_CAMELIZE_REGEXP_1, function (match) {
+  return key.replace(STRING_CAMELIZE_REGEXP_1, function (match, separator, chr) {
     return chr ? chr.toUpperCase() : '';
   }).replace(STRING_CAMELIZE_REGEXP_2, function (match) {
     return match.toLowerCase();
