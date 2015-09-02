@@ -1,8 +1,8 @@
-# Ember-cli-i18n-lazy-lookup
+# ember-i18n-hierarchic
 
-Ember CLI I18n Lazy Lookup is an Ember CLI addon for [Broccoli I18n Lazy Lookup](https://github.com/BookingSync/broccoli-i18n-lazy-lookup).
+Ember CLI I18n Hierarchic is an Ember CLI addon for hierarchic key i18n lookup. Forked from [ember-cli-i18n-lazy-lookup](https://github.com/BookingSync/ember-cli-i18n-lazy-lookup).
+This addon is focussed on PODs based ember-cli strucure.
 
-[Broccoli's I18n Lazy Lookup](https://github.com/BookingSync/broccoli-i18n-lazy-lookup) is made to add support for lazy lookup in [Ember I18n](https://github.com/jamesarosen/ember-i18n).
 
 ## Installation
 
