@@ -1,6 +1,6 @@
 {
   "name": "ember-i18n-hierarchic",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Ember CLI I18n Hierarchic is an Ember CLI addon for [Broccoli](https://github.com/BookingSync/broccoli-i18n-lazy-lookup).",
   "main": "index.js",
   "directories": {
