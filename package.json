@@ -43,7 +43,7 @@
     "configPath": "tests/dummy/config"
   },
   "dependencies": {
-    "broccoli-i18n-lazy-lookup": "0.0.4"
+    "broccoli-filter": "~0.1.6"
   },
   "description": "This README outlines the details of collaborating on this Ember addon.",
   "bugs": {
