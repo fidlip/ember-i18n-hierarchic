@@ -1,4 +1,4 @@
-var Filter = require('broccoli-filter');
+const Filter = require('broccoli-filter');
 
 function I18nLazyLookup (inputTree, options) {
   if (!(this instanceof I18nLazyLookup)) return new I18nLazyLookup(inputTree, options);
@@ -14,7 +14,7 @@ I18nLazyLookup.prototype = Object.create(Filter.prototype);
 I18nLazyLookup.prototype.constructor = I18nLazyLookup;
 
 I18nLazyLookup.prototype.canProcessFile = function (relativePath) {
-  var extension = this.pathExtension(relativePath);
+  let extension = this.pathExtension(relativePath);
 
   if (extension === 'js' || extension === 'hbs') {
     return true;
@@ -28,14 +28,14 @@ I18nLazyLookup.prototype.getDestFilePath = function(relativePath) {
 };
 
 I18nLazyLookup.prototype.pathExtension = function(relativePath) {
-  var tmp = relativePath.toString().split('.');
+  let tmp = relativePath.toString().split('.');
   return tmp[tmp.length - 1];
 };
 
 I18nLazyLookup.prototype.processString = function (str, relativePath) {
-  var extension = this.pathExtension(relativePath);
-  var pathChunks = relativePath.split('.')[0].split('/');
-  var prefix;
+  let extension = this.pathExtension(relativePath),
+      pathChunks = relativePath.split('.')[0].split('/'),
+      prefix;
   // Remove app-name and templates/controllers/components suffix
   pathChunks.shift();
   pathChunks.pop();
@@ -52,7 +52,7 @@ I18nLazyLookup.prototype.processString = function (str, relativePath) {
   prefix = pathChunks.join('.');
 
   if (extension === 'js') {
-    return this.processLazyLookup(str, prefix, '[\'"](\\.[\\w-\\.]+)[\'"]');
+    return this.processLazyLookup(str, prefix, '[\'"](\\@\\.[\\w-\\.]+)[\'"]');
   } else if (extension === 'hbs') {
     return this.processLazyLookup(str, prefix, '[\'"](\\.[\\w-\\.]+)[\'"]');
   } else {
@@ -60,8 +60,8 @@ I18nLazyLookup.prototype.processString = function (str, relativePath) {
   }
 };
 
-var STRING_CAMELIZE_REGEXP_1 = (/(\-|\_|\.|\s)+(.)?/g);
-var STRING_CAMELIZE_REGEXP_2 = (/(^|\/)([A-Z])/g);
+let STRING_CAMELIZE_REGEXP_1 = (/(\-|\_|\.|\s)+(.)?/g);
+let STRING_CAMELIZE_REGEXP_2 = (/(^|\/)([A-Z])/g);
 
 function camelize(key) {
   return key.replace(STRING_CAMELIZE_REGEXP_1, function (match, separator, chr) {
@@ -73,17 +73,18 @@ function camelize(key) {
 
 
 I18nLazyLookup.prototype.processLazyLookup = function(str, prefix, regexp) {
-  var matches = str.match(new RegExp(regexp, 'g')) || [];
-  var match;
-  var matchedString;
-  var finalString;
-  var i18nKey;
+  let matches = str.match(new RegExp(regexp, 'g')) || [],
+      match,
+      matchedString,
+      finalString,
+      i18nKey;
 
-  for (var i = 0; matches[i]; ++i) {
+  for (let i = 0; matches[i]; ++i) {
     match = matches[i].match(new RegExp(regexp));
 
     matchedString = match[0];
-    i18nKey = prefix + match[1];
+
+    i18nKey = prefix + match[1].substring(1);
     finalString = matchedString.replace(match[1], i18nKey);
 
     str = str.replace(matchedString, finalString);
@@ -97,23 +98,21 @@ I18nLazyLookup.prototype.processLazyLookup = function(str, prefix, regexp) {
 module.exports = {
   name: 'ember-i18n-hierarchic',
 
-  included: function(app) {
-    app.registry.remove('template', 'broccoli-ember-hbs-template-compiler');
-    app.registry.add('template', {
+  setupPreprocessorRegistry: function(type, registry) {
+    let addonContext = this;
+    registry.add('template', {
       name: 'ember-i18n-hierarchic',
-      ext: 'hbs',
+      ext: ['hbs', 'handlebars'],
       toTree: function(tree) {
         return I18nLazyLookup(tree);
       }
     });
-    app.registry.add('template', 'broccoli-ember-hbs-template-compiler');
-    app.registry.add('js', {
+    registry.add('js', {
       name: 'ember-i18n-hierarchic',
       ext: 'js',
       toTree: function(tree) {
         return I18nLazyLookup(tree);
       }
     });
-
   }
 };
