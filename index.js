@@ -52,12 +52,13 @@ I18nLazyLookup.prototype.processString = function (str, relativePath) {
   prefix = pathChunks.join('.');
 
   if (extension === 'js') {
-    return this.processLazyLookup(str, prefix, '[\'"](\\@\\.[\\w-\\.]+)[\'"]');
+    ret = this.processLazyLookup(str, prefix, '[\'"](\\@\\.[\\w-\\.]+)[\'"]');
   } else if (extension === 'hbs') {
-    return this.processLazyLookup(str, prefix, '[\'"](\\.[\\w-\\.]+)[\'"]');
+    ret = this.processLazyLookup(str, prefix, '[\'"](\\@\\.[\\w-\\.]+)[\'"]');
   } else {
-    return str;
+    ret = str;
   }
+  return ret
 };
 
 let STRING_CAMELIZE_REGEXP_1 = (/(\-|\_|\.|\s)+(.)?/g);
@@ -98,6 +99,12 @@ I18nLazyLookup.prototype.processLazyLookup = function(str, prefix, regexp) {
 module.exports = {
   name: 'ember-i18n-hierarchic',
 
+  shouldSetupRegistryInIncluded: function() {
+    return !checker.isAbove(this, '0.2.0');
+  },
+
+
+
   setupPreprocessorRegistry: function(type, registry) {
     let addonContext = this;
     registry.add('template', {
@@ -114,5 +121,21 @@ module.exports = {
         return I18nLazyLookup(tree);
       }
     });
+  },
+
+  included: function included(app) {
+    this._super.included.apply(this, arguments);
+
+    // see: https://github.com/ember-cli/ember-cli/issues/3718
+    if (typeof app.import !== 'function' && app.app) {
+      app = app.app;
   }
+
+    this.app = app;
+
+    if (this.shouldSetupRegistryInIncluded()) {
+      this.setupPreprocessorRegistry('parent', app.registry);
+    }
+  }
+
 };
