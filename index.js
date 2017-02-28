@@ -1,4 +1,6 @@
 const Filter = require('broccoli-filter');
+var checker = require('ember-cli-version-checker');
+var mergeTrees = require('broccoli-merge-trees');
 
 function I18nLazyLookup (inputTree, options) {
   if (!(this instanceof I18nLazyLookup)) return new I18nLazyLookup(inputTree, options);
